@@ -19,8 +19,8 @@ test: uninstall install
 	cd tests && nosetests -v --with-coverage --cover-package=vlab_cee_api
 
 images: build
-	sudo docker build -f ApiDockerfile -t willnx/vlab-cee-api .
-	sudo docker build -f WorkerDockerfile -t willnx/vlab-cee-worker .
+	docker build -f ApiDockerfile -t willnx/vlab-cee-api .
+	docker build -f WorkerDockerfile -t willnx/vlab-cee-worker .
 
 up:
 	docker-compose -p vlabcee up --abort-on-container-exit
