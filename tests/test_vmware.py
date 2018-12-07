@@ -23,10 +23,18 @@ class TestVMware(unittest.TestCase):
         fake_folder = MagicMock()
         fake_folder.childEntity = [fake_vm]
         fake_vCenter.return_value.__enter__.return_value.get_by_name.return_value = fake_folder
-        fake_get_info.return_value = {'worked': True, 'note': "CEE=3.28"}
+        fake_get_info.return_value = {'component': 'CEE',
+                                      'created': 1234,
+                                      'version': '8.5.1',
+                                      'configured': False,
+                                      'generation': 1}
 
         output = vmware.show_cee(username='alice')
-        expected = {'mycee': {'worked': True, 'note': "CEE=3.28"}}
+        expected = {'mycee': {'component': 'CEE',
+                              'created': 1234,
+                              'version': '8.5.1',
+                              'configured': False,
+                              'generation': 1}}
 
         self.assertEqual(output, expected)
 
@@ -39,31 +47,37 @@ class TestVMware(unittest.TestCase):
         fake_folder = MagicMock()
         fake_folder.childEntity = [fake_vm]
         fake_vCenter.return_value.__enter__.return_value.get_by_name.return_value = fake_folder
-        fake_get_info.return_value = {'worked': True, 'note': "noIIQ=3.28"}
+        fake_get_info.return_value = {'component': 'otherThing',
+                                      'created': 1234,
+                                      'version': '8.5.1',
+                                      'configured': False,
+                                      'generation': 1}
 
         output = vmware.show_cee(username='alice')
         expected = {}
 
         self.assertEqual(output, expected)
 
+    @patch.object(vmware.virtual_machine, 'set_meta')
     @patch.object(vmware, 'consume_task')
     @patch.object(vmware, 'Ova')
     @patch.object(vmware.virtual_machine, 'get_info')
     @patch.object(vmware.virtual_machine, 'deploy_from_ova')
     @patch.object(vmware, 'vCenter')
-    def test_create_cee(self, fake_vCenter, fake_deploy_from_ova, fake_get_info, fake_Ova, fake_consume_task):
+    def test_create_cee(self, fake_vCenter, fake_deploy_from_ova, fake_get_info, fake_Ova, fake_consume_task, fake_set_meta):
         """``create_cee`` returns the new cee's info when everything works"""
         fake_logger = MagicMock()
+        fake_deploy_from_ova.return_value.name = 'myCEE'
         fake_Ova.return_value.networks = ['vLabNetwork']
         fake_get_info.return_value = {'worked' : True}
         fake_vCenter.return_value.__enter__.return_value.networks = {'someNetwork': vmware.vim.Network(moId='asdf')}
 
         output = vmware.create_cee(username='alice',
-                                         machine_name='mycee',
-                                         image='3.28',
-                                         network='someNetwork',
-                                         logger=fake_logger)
-        expected = {'worked': True}
+                                   machine_name='mycee',
+                                   image='8.5.1',
+                                   network='someNetwork',
+                                   logger=fake_logger)
+        expected = {'myCEE' :{'worked': True}}
 
         self.assertEqual(output, expected)
 
@@ -98,7 +112,11 @@ class TestVMware(unittest.TestCase):
         fake_folder = MagicMock()
         fake_folder.childEntity = [fake_vm]
         fake_vCenter.return_value.__enter__.return_value.get_by_name.return_value = fake_folder
-        fake_get_info.return_value = {'worked': True, 'note': "CEE=3.28"}
+        fake_get_info.return_value = {'component': 'CEE',
+                                      'created': 1234,
+                                      'version': '8.5.1',
+                                      'configured': False,
+                                      'generation': 1}
         vmware.delete_cee(username='alice', machine_name='mycee', logger=fake_logger)
 
         self.assertTrue(fake_power.called)
