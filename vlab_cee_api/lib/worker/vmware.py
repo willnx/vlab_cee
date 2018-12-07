@@ -9,10 +9,6 @@ from vlab_inf_common.vmware import vCenter, Ova, vim, virtual_machine, consume_t
 from vlab_cee_api.lib import const
 
 
-logger = get_task_logger(__name__)
-logger.setLevel(const.VLAB_CEE_LOG_LEVEL.upper())
-
-
 def show_cee(username):
     """Obtain basic information about cee
 
@@ -34,7 +30,7 @@ def show_cee(username):
     return cee_vms
 
 
-def delete_cee(username, machine_name):
+def delete_cee(username, machine_name, logger):
     """Unregister and destroy a user's cee
 
     :Returns: None
@@ -44,6 +40,9 @@ def delete_cee(username, machine_name):
 
     :param machine_name: The name of the VM to delete
     :type machine_name: String
+
+    :param logger: An object for logging messages
+    :type logger: logging.LoggerAdapter
     """
     with vCenter(host=const.INF_VCENTER_SERVER, user=const.INF_VCENTER_USER, \
                  password=const.INF_VCENTER_PASSWORD) as vcenter:
@@ -63,7 +62,7 @@ def delete_cee(username, machine_name):
             raise ValueError('No {} named {} found'.format('cee', machine_name))
 
 
-def create_cee(username, machine_name, image, network):
+def create_cee(username, machine_name, image, network, logger):
     """Deploy a new instance of CEE
 
     :Returns: Dictionary
@@ -79,6 +78,9 @@ def create_cee(username, machine_name, image, network):
 
     :param network: The name of the network to connect the new CEE instance up to
     :type network: String
+
+    :param logger: An object for logging messages
+    :type logger: logging.LoggerAdapter
     """
     with vCenter(host=const.INF_VCENTER_SERVER, user=const.INF_VCENTER_USER,
                  password=const.INF_VCENTER_PASSWORD) as vcenter:

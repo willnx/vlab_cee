@@ -61,8 +61,9 @@ class CEEView(TaskView):
     def get(self, *args, **kwargs):
         """Display the CEE instances you own"""
         username = kwargs['token']['username']
+        txn_id = request.headers.get('X-REQUEST-ID', 'noId')
         resp_data = {'user' : username}
-        task = current_app.celery_app.send_task('cee.show', [username])
+        task = current_app.celery_app.send_task('cee.show', [username, txn_id])
         resp_data['content'] = {'task-id': task.id}
         resp = Response(ujson.dumps(resp_data))
         resp.status_code = 202
@@ -74,12 +75,13 @@ class CEEView(TaskView):
     def post(self, *args, **kwargs):
         """Create a new CEE instance"""
         username = kwargs['token']['username']
+        txn_id = request.headers.get('X-REQUEST-ID', 'noId')
         resp_data = {'user' : username}
         body = kwargs['body']
         machine_name = body['name']
         image = body['image']
         network = body['network']
-        task = current_app.celery_app.send_task('cee.create', [username, machine_name, image, network])
+        task = current_app.celery_app.send_task('cee.create', [username, machine_name, image, network, txn_id])
         resp_data['content'] = {'task-id': task.id}
         resp = Response(ujson.dumps(resp_data))
         resp.status_code = 202
@@ -91,9 +93,10 @@ class CEEView(TaskView):
     def delete(self, *args, **kwargs):
         """Destroy a CEE instance"""
         username = kwargs['token']['username']
+        txn_id = request.headers.get('X-REQUEST-ID', 'noId')
         resp_data = {'user' : username}
         machine_name = kwargs['body']['name']
-        task = current_app.celery_app.send_task('cee.delete', [username, machine_name])
+        task = current_app.celery_app.send_task('cee.delete', [username, machine_name, txn_id])
         resp_data['content'] = {'task-id': task.id}
         resp = Response(ujson.dumps(resp_data))
         resp.status_code = 202
@@ -106,8 +109,9 @@ class CEEView(TaskView):
     def image(self, *args, **kwargs):
         """Show available versions of CEE that can be deployed"""
         username = kwargs['token']['username']
+        txn_id = request.headers.get('X-REQUEST-ID', 'noId')
         resp_data = {'user' : username}
-        task = current_app.celery_app.send_task('cee.image')
+        task = current_app.celery_app.send_task('cee.image', [txn_id])
         resp_data['content'] = {'task-id': task.id}
         resp = Response(ujson.dumps(resp_data))
         resp.status_code = 202
