@@ -23,18 +23,18 @@ class TestVMware(unittest.TestCase):
         fake_folder = MagicMock()
         fake_folder.childEntity = [fake_vm]
         fake_vCenter.return_value.__enter__.return_value.get_by_name.return_value = fake_folder
-        fake_get_info.return_value = {'component': 'CEE',
-                                      'created': 1234,
-                                      'version': '8.5.1',
-                                      'configured': False,
-                                      'generation': 1}
+        fake_get_info.return_value = {'meta' : {'component': 'CEE',
+                                                'created': 1234,
+                                                'version': '8.5.1',
+                                                'configured': False,
+                                                'generation': 1}}
 
         output = vmware.show_cee(username='alice')
-        expected = {'mycee': {'component': 'CEE',
-                              'created': 1234,
-                              'version': '8.5.1',
-                              'configured': False,
-                              'generation': 1}}
+        expected = {'mycee': {'meta' : {'component': 'CEE',
+                                        'created': 1234,
+                                        'version': '8.5.1',
+                                        'configured': False,
+                                        'generation': 1}}}
 
         self.assertEqual(output, expected)
 
@@ -47,11 +47,11 @@ class TestVMware(unittest.TestCase):
         fake_folder = MagicMock()
         fake_folder.childEntity = [fake_vm]
         fake_vCenter.return_value.__enter__.return_value.get_by_name.return_value = fake_folder
-        fake_get_info.return_value = {'component': 'otherThing',
-                                      'created': 1234,
-                                      'version': '8.5.1',
-                                      'configured': False,
-                                      'generation': 1}
+        fake_get_info.return_value = {'meta' : {'component': 'otherThing',
+                                                'created': 1234,
+                                                'version': '8.5.1',
+                                                'configured': False,
+                                                'generation': 1}}
 
         output = vmware.show_cee(username='alice')
         expected = {}
@@ -131,11 +131,11 @@ class TestVMware(unittest.TestCase):
         fake_folder = MagicMock()
         fake_folder.childEntity = [fake_vm]
         fake_vCenter.return_value.__enter__.return_value.get_by_name.return_value = fake_folder
-        fake_get_info.return_value = {'component': 'CEE',
-                                      'created': 1234,
-                                      'version': '8.5.1',
-                                      'configured': False,
-                                      'generation': 1}
+        fake_get_info.return_value = {'meta' : {'component': 'CEE',
+                                                'created': 1234,
+                                                'version': '8.5.1',
+                                                'configured': False,
+                                                'generation': 1}}
         vmware.delete_cee(username='alice', machine_name='mycee', logger=fake_logger)
 
         self.assertTrue(fake_power.called)
