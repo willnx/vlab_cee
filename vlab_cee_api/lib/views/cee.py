@@ -18,7 +18,7 @@ logger = get_logger(__name__, loglevel=const.VLAB_CEE_LOG_LEVEL)
 
 class CEEView(MachineView):
     """API end point for managing EMC Common Event Enabler instances"""
-    route_base = '/api/1/inf/cee'
+    route_base = '/api/2/inf/cee'
     RESOURCE = 'cee'
     POST_SCHEMA = { "$schema": "http://json-schema.org/draft-04/schema#",
                     "type": "object",
@@ -81,7 +81,7 @@ class CEEView(MachineView):
         body = kwargs['body']
         machine_name = body['name']
         image = body['image']
-        network = body['network']
+        network = '{}_{}'.format(username, body['network'])
         task = current_app.celery_app.send_task('cee.create', [username, machine_name, image, network, txn_id])
         resp_data['content'] = {'task-id': task.id}
         resp = Response(ujson.dumps(resp_data))
