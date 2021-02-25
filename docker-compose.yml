@@ -11,19 +11,20 @@ services:
       - INF_VCENTER_USER=Administrator@vsphere.local
       - INF_VCENTER_PASSWORD=1.Password
     volumes:
-      - ./vlab_cee_api:/usr/lib/python3.6/site-packages/vlab_cee_api
+      - ./vlab_cee_api:/usr/lib/python3.8/site-packages/vlab_cee_api
     command: ["python3", "app.py"]
 
   cee-worker:
     image:
       willnx/vlab-cee-worker
     volumes:
-      - ./vlab_cee_api:/usr/lib/python3.6/site-packages/vlab_cee_api
+      - ./vlab_cee_api:/usr/lib/python3.8/site-packages/vlab_cee_api
+      - /home/willhn/code/vlab/vlab_inf_common/vlab_inf_common:/usr/lib/python3.6/site-packages/vlab_inf_common
       - /mnt/raid/images/cee:/images:ro
     environment:
-      - INF_VCENTER_SERVER=changeME
-      - INF_VCENTER_USER=changeME
-      - INF_VCENTER_PASSWORD=changeME
+      - INF_VCENTER_SERVER=virtlab.igs.corp
+      - INF_VCENTER_USER=Administrator@vsphere.local
+      - INF_VCENTER_PASSWORD=1.Password
       - INF_VCENTER_TOP_LVL_DIR=/vlab
 
   cee-broker:

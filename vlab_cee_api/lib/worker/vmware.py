@@ -109,8 +109,6 @@ def create_cee(username, machine_name, image, network, logger):
         return {the_vm.name: info}
 
 
-
-
 def list_images():
     """Obtain a list of available versions of cee that can be created
 
